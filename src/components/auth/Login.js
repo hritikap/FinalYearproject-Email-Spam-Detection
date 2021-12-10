@@ -1,30 +1,22 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 // import { GlobalState } from '../../GlobalState';
 import { AuthStyled } from './Auth';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const history = useHistory();
+
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    try {
-      await response.json();
-      localStorage.setItem('firstLogin', true);
-      // history.push('/');
-      window.location.href = '/';
-    } catch (err) {
-      console.log(err);
-    }
+    login(emailRef.current.value, passwordRef.current.value);
+
+    history.push('/');
   };
 
   return (
@@ -32,21 +24,10 @@ const Login = () => {
       <form onSubmit={handleSubmit} className='loginContainer'>
         <>
           <label>Email</label>
-          <input
-            type='text'
-            autoFocus
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <input type='email' autoFocus required ref={emailRef} />
 
           <label>Password</label>
-          <input
-            type='password'
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <input type='password' required ref={passwordRef} />
         </>
         <div className='btnContainer'>
           <button>login</button>

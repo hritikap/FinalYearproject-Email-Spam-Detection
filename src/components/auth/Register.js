@@ -1,64 +1,31 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 import { AuthStyled } from './Auth';
+import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const history = useHistory();
+
+  const { register } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const response = await fetch('/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
-
-    try {
-      const res = await response.json();
-      console.log(res);
-      window.location.href = '/login';
-    } catch (err) {
-      console.log(err);
-    }
+    register(emailRef.current.value, passwordRef.current.value);
+    history.push('/');
   };
 
   return (
     <AuthStyled>
       <form onSubmit={handleSubmit} className='loginContainer'>
         <>
-          <label>Name</label>
-          <input
-            type='text'
-            autoFocus
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </>
-
-        <>
           <label>Email</label>
-          <input
-            type='text'
-            autoFocus
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <input type='email' autoFocus required ref={emailRef} />
           {/* <p className='errorMsg'>{emailError}</p> */}
           <label>Password</label>
-          <input
-            type='password'
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <input type='password' required ref={passwordRef} />
           {/* <p className='errorMsg'>{passwordError}</p> */}
         </>
 

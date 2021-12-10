@@ -11,6 +11,7 @@ import Sidebar from './components/Sidebar';
 import Inbox from './components/pages/mails/Inbox';
 import Sent from './components/pages/mails/Sent';
 import SpamClassifier from './components/pages/mails/spamclassifier';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -27,22 +28,24 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const App = () => {
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState(false);
 
   return (
     <BrowserRouter>
-      <GlobalStyle />
-      <Navbar user={user} setUser={setUser} />
-      <Sidebar user={user} />
-      <Switch>
-        <Route exact path='/' component={Home} />
-        <Route path='/login' component={Login} />
-        <Route path='/profile' component={Profile} />
-        <Route path='/register' component={Register} />
-        <Route path='/inbox' component={Inbox} />
-        <Route path='/sent-mails' component={Sent} />
-        <Route path='/spam-classifier' component={SpamClassifier} />
-      </Switch>
+      <AuthProvider>
+        <GlobalStyle />
+        <Navbar />
+        <Sidebar />
+        <Switch>
+          {!user && <Route exact path='/' component={Home} />}
+          <Route path='/login' component={Login} />
+          <Route path='/profile' component={Profile} />
+          <Route path='/register' component={Register} />
+          <Route path='/inbox' component={Inbox} />
+          <Route path='/sent-mails' component={Sent} />
+          <Route path='/spam-classifier' component={SpamClassifier} />
+        </Switch>
+      </AuthProvider>
     </BrowserRouter>
   );
 };

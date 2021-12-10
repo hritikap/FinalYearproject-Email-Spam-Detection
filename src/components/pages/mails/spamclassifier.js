@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+import { slideInDown } from 'react-animations';
 
 const Classifier = styled.div`
   display: flex;
@@ -24,7 +25,23 @@ const Form = styled.form`
     font-size: 1.2rem;
   }
 `;
-
+const Animation = styled.div`
+  animation: 4s infinite ${keyframes(slideInDown)};
+  background: linear-gradient(
+    to left,
+    violet,
+    indigo,
+    blue,
+    green,
+    yellow,
+    orange,
+    red,
+    red,
+    red
+  );
+  -webkit-background-clip: text;
+  color: transparent;
+`;
 const Button = styled.button`
   background-color: blue;
   padding: 15px;
@@ -48,6 +65,8 @@ const SpamClassifier = () => {
     dictionary.forEach((word) => {
       if (mailArray.includes(word)) {
         alert('spam found', word);
+        // } else {
+        //   alert('this is ham', word);
       }
       console.log(word);
     });
@@ -55,7 +74,9 @@ const SpamClassifier = () => {
 
   return (
     <Classifier>
-      <h1>Check here for the emails</h1>
+      <Animation>
+        <h1>Check here for the spam mails</h1>
+      </Animation>
       <Form>
         <textarea
           rows={10}

@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Add, Inbox, Send } from '@material-ui/icons';
+import { Add, Inbox, Send, Error } from '@material-ui/icons';
+import Model from './component/Model';
 
-const Button = styled.button`
+const ComposeButton = styled.button`
   margin-top: 15px;
   margin-left: 10px;
   margin-bottom: 15px;
@@ -30,9 +32,17 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* align-items: center; */
+
   flex: 0.3;
-  background-color: lightblue;
+  background: radial-gradient(
+    ellipse at left bottom,
+    rgba(22, 24, 47, 1) 0%,
+    rgba(38, 20, 72, 0.9) 59%,
+    rgba(17, 27, 75, 0.9) 100%
+  );
+  box-shadow: 0 50px 70px -20px rgba(0, 0, 0, 0.8);
+
+  color: gray;
 
   .top {
     margin-top: 50px;
@@ -44,7 +54,7 @@ const Wrapper = styled.div`
     padding: 10px;
     border-radius: 10px;
     a {
-      color: black;
+      color: white;
     }
     :hover {
       background-color: white;
@@ -68,8 +78,12 @@ const Wrapper = styled.div`
         border-left: none;
         border-right: none;
         font-weight: bolder;
+
+        display: flex;
+        align-items: center;
+
         a {
-          color: black;
+          color: white;
           box-shadow: 0px 2px 5px -2px rgba(0, 0, 0, 0.75);
         }
         :hover {
@@ -84,45 +98,62 @@ const Wrapper = styled.div`
   }
 `;
 
-const sideList = [
-  {
-    id: 1,
-    name: 'inbox',
-    icon: { Inbox },
-  },
-  {
-    id: 2,
-    name: 'sent-mails',
-    icon: { Send },
-  },
-  {
-    id: 3,
-    name: 'Spam',
-    icon: '',
-  },
-];
-
-const link = sideList.map((link) => {
-  return (
-    <li key={link.id}>
-      <Link to={`/${link.name}`}>{link.name}</Link>
-    </li>
-  );
-});
-
 const Sidebar = ({ user }) => {
+  const [modal, setModal] = useState(false);
+  const [to, setTo] = useState('');
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
+
+  const toogleModal = () => {
+    setModal(!modal);
+  };
+
+  const sendMail = (e) => {
+    e.preventDefault();
+    console.log(to, subject, body);
+    setModal(!modal);
+    setTo('');
+    setBody('');
+    setSubject('');
+  };
+
   return (
     <>
       {user && (
         <Wrapper>
           <div className='top'>
-            <Button>
+            <ComposeButton onClick={toogleModal}>
               <Add />
               compose
-            </Button>
+            </ComposeButton>
+            {modal && (
+              <Model
+                to={to}
+                setTo={setTo}
+                subject={subject}
+                setSubject={setSubject}
+                body={body}
+                setBody={setBody}
+                sendMail={sendMail}
+                toogleModal={toogleModal}
+              />
+            )}
           </div>
           <div className='bottom'>
-            <ul>{link}</ul>
+            <ul>
+              <li>
+                <Inbox />
+                <Link to='/inbox'>Inbox</Link>
+              </li>
+              <li>
+                <Send />
+                <Link to='/sent-mails'>Sent Mail</Link>
+              </li>
+              {/* <li>
+                <Error />
+                <Link to='/spam'>Spam</Link>
+              </li> */}
+            </ul>
           </div>
           <div className='last'>
             <Link to='/spam-classifier'>Spam-Classifier</Link>
